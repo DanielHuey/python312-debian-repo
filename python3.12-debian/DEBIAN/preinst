@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Pre-Installation Shell Script
+
+# Path to the usr directory in package
+USR=../usr 
+
+# Python installation directory. 
+# We shall use this to edit the python files to point to the correct interpreter
+PYINSTDIR=usr/local 
+
+# colors
+red="\e[38;5;196m"
+yellow="\e[38;5;226m"
+def="\e[0m"
+
+#welcome messages
+echo -e "$yellow""Welcome to the installer for Python 3.12$def"
+echo "This setup installs Python to /usr/local ."
+echo "Do you wish to install to /usr instead? (Y/n)"
+echo -e "$red> Choosing 'y' will replace any existing Python3 at /usr/bin$def"
+
+function getchoice(){
+	read choice
+
+	if [ "$choice" = "" ]; then
+		choice=n
+	fi
+
+	if [ "$choice" = y ] || [ "$choice" = Y ]; then
+		PYINSTDIR=usr
+		mv $USR/local/* $USR/
+		for file in 2to3-3.12 idle3.12 pip3.12 pydoc3.12; do
+			if [ -f "$USR/bin/$file" ]; then
+				# Edit the files
+				# This command replaces the first line
+				sed -i "1s@.*@#!/$PYINSTDIR/bin/python3.12@" "$USR/bin/$file"
+			fi
+		done
+		rmdir $USR/local
+		echo "Installing Python 3.12 to '/usr' ..."
+
+	elif [ "$choice" = n ] || [ "$choice" = N ]; then
+		mkdir -p $USR/local
+		if [ -d "$USR/bin" ] && [ -d "$USR/lib" ] && [ -d "$USR/include" ]; then
+			mv $USR/bin $USR/lib $USR/include $USR/local
+			for file in 2to3-3.12 idle3.12 pip3.12 pydoc3.12; do
+				if [ -f "$USR/local/bin/$file" ]; then
+					# Edit the files
+					sed -i "1s@.*@#!/$PYINSTDIR/bin/python3.12@" "$USR/local/bin/$file"
+				fi
+			done
+		fi
+		echo "Installing Python 3.12 to '/usr/local' ..."
+
+	else
+		echo -e "$red""Invalid input, expected 'y' or 'n'.$def"
+		getchoice
+	fi
+}
+
+getchoice
+
+touch pydir
+echo "/$PYINSTDIR" | tee "pydir"

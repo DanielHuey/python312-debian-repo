@@ -1,0 +1,8 @@
+Package: python3.12-debian
+Version: 3.12.0
+Section: interpreters
+Priority: optional
+Architecture: amd64
+Maintainer: Daniel <https://github.com/DanielHuey>
+Description: Python 3.12 interpreter. Built with Parrot Linux 5.3
+Size: ~450MB

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Post-Installation Shell Script
+
+# Reading installation directory
+if [ -f "pydir" ]; then
+    read -r pydir < "pydir"
+else
+    exit 0
+fi
+
+# colors
+red="\e[38;5;196m"
+yellow="\e[38;5;226m"
+def="\e[0m"
+
+# Python folders
+pyinc=$pydir/include/python3.12
+pylib=$pydir/lib/python3.12
+
+# Elevate file permissions to prevent unwanted deletions.
+echo -e "$yellow""Installation finished successfully. Elevating critical files:$def"
+function elevate(){
+    sudo chown root $1
+    sudo chmod $2 $1
+    echo -e "Elevated $yellow$(basename $1)$def to $red$2$def"
+}
+
+echo
+echo "Files at $pyinc" #include/python3.12
+echo
+for i in $pyinc/*.h; do
+    elevate $i 644
+done
+
+for i in $pyinc/cpython/*.h; do
+    elevate $i 644
+done
+
+for i in $pyinc/internal/*.h; do
+    elevate $i 644
+done
+
+echo
+echo "Files at $pylib" #lib/python3.12
+echo
+for i in $pylib/config-3.12-x86_64-linux-gnu/*; do
+    elevate $i 644
+done
+
+for i in $pylib/lib-dynload/*; do
+    elevate $i 755
+done
+
+# For those wondering, 644 and 755 are numbers I saw from when I ran "sudo make install" from the Python source

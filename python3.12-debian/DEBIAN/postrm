@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Post-Removal Shell Script
+
+# Reading installation directory
+# if [ -f "pydir" ]; then
+#     read -r pydir < "pydir"
+# else
+#     exit 0
+# fi
+
+# colors
+red="\e[38;5;196m"
+yellow="\e[38;5;226m"
+def="\e[0m"
+
+echo -e "$red""Remove local pip wheels? (Y/n)$yellow"
+read choice
+if [ "$choice" = y ] || [ "$choice" = Y ];then
+    rm -r -v "$HOME/.local/lib/python3.12"
+fi
+echo -e "$def"
